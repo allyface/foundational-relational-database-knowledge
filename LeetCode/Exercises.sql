@@ -2,10 +2,9 @@
   -- Write a SQL query to find all duplicate emails in a table named Person.
 
 SELECT Email
-  FROM (
-       SELECT Email, COUNT(Email)
+  FROM (SELECT Email, COUNT(Email)
        FROM Person
- WHERE COUNT(Email) > 1)Subquery;
+       WHERE COUNT(Email) > 1)Subquery;
 
 
 -- #175 - Combine Two Tables
@@ -59,8 +58,8 @@ DELETE p1
 
 SELECT MAX(Salary) AS SecondHighestSalary
   FROM Employee
- WHERE Salary < (
-       SELECT MAX(Salary)
+ WHERE Salary <
+       (SELECT MAX(Salary)
        FROM Employee);
 
 -- #178 Rank Scores
@@ -75,7 +74,14 @@ SELECT Score, DENSE_RANK() OVER(ORDER BY Score DESC) AS Rank
 SELECT Department.Name AS Department, a.Name AS Employee, Salary
   FROM  Employee a, Department
  WHERE a.DepartmentId = Department.Id
-   AND Salary >= ALL (
-                SELECT Salary
-                  FROM Employee b
-                 WHERE b.DepartmentId = a.DepartmentId);
+   AND Salary >= ALL
+       (SELECT Salary
+          FROM Employee b
+         WHERE b.DepartmentId = a.DepartmentId);
+
+-- #180 - Consecutive Numbers
+  -- For example, given the above Logs table, 1 is the only number that appears consecutively for at least three times.
+
+  SELECT DISTINCT A.Num AS ConsecutiveNums
+             FROM Logs A, Logs B, Logs C
+            WHERE (A.Id = B.Id + 1) AND (A.Id = C.Id + 2) AND (A.Num = B.Num) AND (B.Num = C.Num);
